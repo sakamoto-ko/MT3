@@ -40,4 +40,6 @@ struct Matrix4x4 {
 	float m[4][4];
 };
 
+int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
+
 float Cot(float a);
