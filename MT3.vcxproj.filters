@@ -50,6 +50,12 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Move.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Draw.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -125,5 +131,7 @@
     <ClInclude Include="base.h" />
     <ClInclude Include="Cross.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Move.h" />
+    <ClInclude Include="Draw.h" />
   </ItemGroup>
 </Project>

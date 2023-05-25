@@ -8,6 +8,7 @@
 
 #define kWindowWidth 1280
 #define kWindowHeight 720
+#define pi 3.14f
 
 const char kWindowTitle[] = "LE2B_06_サカモトコウスケ_MT3";
 
@@ -38,6 +39,11 @@ struct Matrix3x3 {
 };
 struct Matrix4x4 {
 	float m[4][4];
+};
+
+struct Sphere {
+	Vector3 center;//!<中心点
+	float radius;//!<半径
 };
 
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
