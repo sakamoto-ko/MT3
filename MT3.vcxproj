@@ -107,6 +107,7 @@
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\TextureManager.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\2d\ImGuiManager.cpp" />
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Cross.cpp" />
     <ClCompile Include="Draw.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="C:\KamataEngine\DirectXGame\input\Input.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\scene\GameScene.h" />
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Cross.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="InputManager.h" />

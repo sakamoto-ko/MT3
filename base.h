@@ -1,10 +1,10 @@
 ﻿#pragma once
-#pragma once
 #include <Novice.h>
 #define _USE_MATH_DEFIENS
 #include <math.h>
 #include <cmath>
 #include <assert.h>
+#include <iostream>
 
 #define kWindowWidth 1280
 #define kWindowHeight 720

@@ -1,7 +1,7 @@
 ﻿#include "Move.h"
 
 void Move::MovePlayer(Vector3 translate, Vector3 rotate, Vector3 cameraPosition, Vector3 playerPosition[]) {
-	inputManager_->Update(); // 入力処理
+	//inputManager_->Update(); // 入力処理
 
 	//WSキーで前後に、ADキーで左右に三角形を動かす処理、Y軸回転をさせる処理
 	//前後

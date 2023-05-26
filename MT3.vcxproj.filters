@@ -56,6 +56,9 @@
     <ClCompile Include="Draw.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -133,5 +136,6 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Draw.h" />
+    <ClInclude Include="Collision.h" />
   </ItemGroup>
 </Project>
