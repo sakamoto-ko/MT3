@@ -19,7 +19,7 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 }
 
 //スカラー倍
-Vector3 Multiply(float scalar, const Vector3& v) {
+Vector3 Scalar(float scalar, const Vector3& v) {
 	Vector3 result = { 0 };
 	result.x = scalar * v.x;
 	result.y = scalar * v.y;
@@ -59,4 +59,17 @@ void VectorScreenPrintf(int x, int y, Vector3& vector, const char* label) {
 	Novice::ScreenPrintf(x + kColumnWidth, y, "%0.2f", vector.y);
 	Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%0.2f", vector.z);
 	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%s", label);
+}
+
+//クロス積
+Vector3 Cross(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+
+	result = {
+		v1.y * v2.z - v1.z * v2.y,
+		v1.z * v2.x - v1.x * v2.z,
+		v1.x * v2.y - v1.y * v2.x
+	};
+
+	return result;
 }

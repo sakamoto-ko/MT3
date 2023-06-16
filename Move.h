@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "Cross.h"
+#include "Vector.h"
+#include "Matrix.h"
+
 #include "InputManager.h"
 
 class Move

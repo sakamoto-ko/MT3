@@ -5,6 +5,10 @@
 #include <cmath>
 #include <assert.h>
 #include <iostream>
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4x4.h"
 
 #define kWindowWidth 1280
 #define kWindowHeight 720
@@ -15,35 +19,41 @@ const char kWindowTitle[] = "LE2B_06_サカモトコウスケ_MT3";
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 
-struct Vector2 {
-	float x;
-	float y;
-};
-struct Vector3 {
-	float x;
-	float y;
-	float z;
-};
-struct Vector4 {
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
-struct Matrix2x2 {
-	float m[2][2];
-};
-struct Matrix3x3 {
-	float m[3][3];
-};
-struct Matrix4x4 {
-	float m[4][4];
-};
-
 struct Sphere {
 	Vector3 center;//!<中心点
 	float radius;//!<半径
+};
+
+struct Triangle {
+	Vector3 vertices[3];//頂点
+};
+
+//直線(-∞~∞)
+struct Line {
+	Vector3 origin;//始点
+	Vector3 diff;//終点への差分ベクトル
+};
+
+//半直線(0~∞)
+struct Ray {
+	Vector3 origin;//始点
+	Vector3 diff;//終点への差分ベクトル
+};
+
+//線分(0~1)
+struct Segment {
+	Vector3 origin;//始点
+	Vector3 diff;//終点への差分ベクトル
+};
+
+struct Plane {
+	Vector3 normal;//法線
+	float distance;//距離
+};
+
+struct AABB {
+	Vector3 min;//最小点
+	Vector3 max;//最大点
 };
 
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);

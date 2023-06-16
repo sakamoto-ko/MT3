@@ -36,7 +36,7 @@ void Draw::DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatri
 			};
 			for (uint32_t i = 0; i < 3; ++i) {
 				//球の計算
-				tmp[i] = Multiply(sphere.radius, tmp[i]);
+				tmp[i] = Scalar(sphere.radius, tmp[i]);
 				tmp[i] = Add(sphere.center, tmp[i]);
 				//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
 				Vector3 ndcVertex = Transform(tmp[i], viewProjectionMatrix);

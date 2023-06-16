@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Cross.h"
+#include "Vector.h"
+#include "Matrix.h"
 
 class Draw
 {

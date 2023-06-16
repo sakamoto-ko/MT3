@@ -1,23 +1,6 @@
 ﻿#pragma once
-#include "Cross.h"
-
-//直線(-∞~∞)
-struct Line {
-	Vector3 origin;//始点
-	Vector3 diff;//終点への差分ベクトル
-};
-
-//半直線(0~∞)
-struct Ray {
-	Vector3 origin;//始点
-	Vector3 diff;//終点への差分ベクトル
-};
-
-//線分(0~1)
-struct Segment {
-	Vector3 origin;//始点
-	Vector3 diff;//終点への差分ベクトル
-};
+#include "Vector.h"
+#include "Matrix.h"
 
 //当たり判定クラス
 class Collision
@@ -28,5 +11,14 @@ public:
 
 	//最近接点
 	Vector3 ClosesetPoint(const Vector3& point, const Segment& segment);
+
+	//球と球の衝突
+	bool IsCollision(const Sphere& s1, const Sphere& s2);
+
+	//球と平面の衝突
+	bool IsCollision(const Sphere& sphere, const Plane plane);
+
+	//線と平面の衝突
+	bool IsCollision(const Plane plane, const Line line);
 };
 
