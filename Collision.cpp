@@ -37,7 +37,7 @@ bool Collision::IsCollision(const Sphere& s1, const Sphere& s2) {
 //球と平面の衝突
 bool Collision::IsCollision(const Sphere& sphere, const Plane plane) {
 	//平面と球の中心点との距離を求める
-	float k = Dot(sphere.center, plane.normal) - sphere.radius;
+	float k = Dot(sphere.center, plane.normal) - plane.distance;
 	k = sqrt(k * k);
 
 	//半径よりも短ければ衝突
