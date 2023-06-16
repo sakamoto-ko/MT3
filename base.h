@@ -28,6 +28,12 @@ struct Triangle {
 	Vector3 vertices[3];//頂点
 };
 
+//線の始点と終点
+struct StartEnd {
+	Vector3 start;//始点
+	Vector3 end;//終点
+};
+
 //直線(-∞~∞)
 struct Line {
 	Vector3 origin;//始点

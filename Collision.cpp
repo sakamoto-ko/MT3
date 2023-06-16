@@ -50,24 +50,23 @@ bool Collision::IsCollision(const Sphere& sphere, const Plane plane) {
 }
 
 //線と平面の衝突
-bool Collision::IsCollision(const Plane plane, const Line line) {
+bool Collision::IsCollision(const Plane plane, const Segment segment) {
 	//法線と線の内積
-	float dot = Dot(plane.normal, line.diff);
+	float dot = Dot(segment.diff, plane.normal);
 
-	//衝突していないため早期リターン
+	//垂直=平行なので、衝突していないため早期リターン
 	if (dot == 0.0f) {
 		return false;
 	}
 
 	//tを求める
-	//float t = (plane.distance - Dot(line.origin, plane.normal)) / dot;
-
+	float t = (plane.distance - Dot(segment.origin, plane.normal)) / dot;
+	
 	//tの値と種類によって衝突しているかを判断する
-	//直線
-	return true;
+	if (t <= 1.0f && t >= 0.0f) {
+		//衝突処理
+		return true;
+	}
 
-	//線分
-	//return true;
-
-	//return false;
+	return false;
 }

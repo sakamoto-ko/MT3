@@ -19,6 +19,6 @@ public:
 	bool IsCollision(const Sphere& sphere, const Plane plane);
 
 	//線と平面の衝突
-	bool IsCollision(const Plane plane, const Line line);
+	bool IsCollision(const Plane plane, const Segment segment);
 };
 

@@ -41,10 +41,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//ViewportMatrixを作る
 	Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-	int s1color = WHITE;
-	Sphere sphere1 = { Vector3{0.0f,0.0f,0.0f},1.0f };
+	Line line = {
+		{ 0.0f,0.0f,0.0f },
+		{ 1.0f,1.0f,1.0f }
+	};
+	Segment segment = { line.origin,line.diff };
+	StartEnd lineLength = {};
 
-	Plane plane = { Vector3{1.0f,0.0f,0.0f},0.5f };
+	//Sphere sphere = { Vector3{0.0f,0.0f,0.0f},1.0f };
+
+	Plane plane = { Vector3{0.0f,1.0f,0.0f},1.0f };
+
+	int color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -75,26 +83,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ViewportMatrixを作る
 		viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		if (collision->IsCollision(sphere1, plane)) {
-			s1color = RED;
+		lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
+		lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
+		
+		if (collision->IsCollision(plane, segment)) {
+			color = RED;
 		}
 		else {
-			s1color = WHITE;
+			color = WHITE;
 		}
 
 		//描画
 		//グリッド
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
+		//線
+		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
 		//球
-		draw->DrawSphere(sphere1, worldViewProjectionMatrix, viewportMatrix, s1color);
+		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
 		//平面
 		draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//imgui
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("sphereC", &sphere1.center.x, 0.01f);
-		ImGui::DragFloat("sphereR", &sphere1.radius, 0.01f);
+		ImGui::DragFloat3("lineO", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("lineD", &segment.diff.x, 0.01f);
+		//ImGui::DragFloat3("sphereC", &sphere.center.x, 0.01f);
+		//ImGui::DragFloat("sphereR", &sphere.radius, 0.01f);
 		ImGui::DragFloat3("planeN", &plane.normal.x, 0.01f);
 		ImGui::DragFloat("planeD", &plane.distance, 0.01f);
 		ImGui::End();
