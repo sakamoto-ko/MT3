@@ -20,5 +20,8 @@ public:
 
 	//線と平面の衝突
 	bool IsCollision(const Plane plane, const Segment segment);
+
+	//三角形と線の衝突
+	bool IsCollision(const Triangle& triangle, const Segment& segment);
 };
 

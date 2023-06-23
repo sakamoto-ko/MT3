@@ -73,3 +73,16 @@ Vector3 Cross(const Vector3& v1, const Vector3& v2) {
 
 	return result;
 }
+
+//ベクトルとフロートの加算
+Vector3 Add(const Vector3& v, const float& a) {
+	Vector3 result;
+
+	result = {
+		v.x + a,
+		v.y + a,
+		v.z + a
+	};
+
+	return result;
+}

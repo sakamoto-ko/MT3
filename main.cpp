@@ -26,9 +26,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		0.26f,0.0f,0.0f
 	};
 	Vector3 kLocalVertices[3]{
-		{1.5f,1.0f,1.0f},
-		{0.0f,-1.0f,1.0f},
-		{3.0f,-1.0f,1.0f}
+		{1.5f,1.0f,0.0f},
+		{0.0f,-1.0f,0.0f},
+		{3.0f,-1.0f,0.0f}
 	};
 
 	//各種行列の計算
@@ -42,16 +42,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 	Line line = {
-		{ 0.0f,0.0f,0.0f },
-		{ 1.0f,1.0f,1.0f }
+		.origin = { 0.0f,0.0f,1.0f },
+		.diff = { 1.0f,1.0f,0.0f }
 	};
 	Segment segment = { line.origin,line.diff };
 	StartEnd lineLength = {};
 
-	//Sphere sphere = { Vector3{0.0f,0.0f,0.0f},1.0f };
+	Sphere sphere = { Vector3{0.0f,0.0f,0.0f},1.0f };
 
 	Plane plane = { Vector3{0.0f,1.0f,0.0f},1.0f };
 
+	Triangle triangle = {
+		triangle.vertices[0] = Vector3{-1.0f,0.0f,1.0f},
+		triangle.vertices[1] = Vector3{0.0f,1.0f,1.0f},
+		triangle.vertices[2] = Vector3{1.0f,0.0f,1.0f},
+	};
+	
 	int color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -86,7 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
 		lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
 		
-		if (collision->IsCollision(plane, segment)) {
+		if (collision->IsCollision(triangle, segment)) {
 			color = RED;
 		}
 		else {
@@ -98,23 +104,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		//線
 		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
+		//三角形
+		draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//球
 		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
 		//平面
-		draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//imgui
 		ImGui::Begin("Window");
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("lineO", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("lineD", &segment.diff.x, 0.01f);
-		//ImGui::DragFloat3("sphereC", &sphere.center.x, 0.01f);
-		//ImGui::DragFloat("sphereR", &sphere.radius, 0.01f);
+		ImGui::DragFloat3("triangle1", &triangle.vertices[0].x, 0.01f);
+		ImGui::DragFloat3("triangle2", &triangle.vertices[1].x, 0.01f);
+		ImGui::DragFloat3("triangle3", &triangle.vertices[2].x, 0.01f);
+		ImGui::DragFloat3("sphereC", &sphere.center.x, 0.01f);
+		ImGui::DragFloat("sphereR", &sphere.radius, 0.01f);
 		ImGui::DragFloat3("planeN", &plane.normal.x, 0.01f);
 		ImGui::DragFloat("planeD", &plane.distance, 0.01f);
 		ImGui::End();
 
-		plane.normal = Normalize(plane.normal);
+		//plane.normal = Normalize(plane.normal);
 
 		// フレームの終了
 		Novice::EndFrame();

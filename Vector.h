@@ -19,3 +19,6 @@ void VectorScreenPrintf(int x, int y, Vector3& vector, const char* label);
 
 //クロス積
 Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
+//ベクトルとフロートの加算
+Vector3 Add(const Vector3& v, const float& a);

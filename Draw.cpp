@@ -121,6 +121,23 @@ Vector3 Draw::Perpendicular(const Vector3& vector) {
 	}
 	return { 0.0f,-vector.z,vector.y };
 }
+
+void Draw::DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+	Vector3 screenVertices[3]{};
+	for (uint32_t i = 0; i < 3; ++i) {
+		Vector3 tmp[3] = {
+			{ triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[0].z},
+			{ triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[1].z},
+			{ triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[2].z},
+		};
+		//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+		Vector3 ndcVertex = Transform(tmp[i], viewProjectionMatrix);
+		//Viewport変換を行ってScreen空間へ
+		screenVertices[i] = Transform(ndcVertex, viewportMatrix);
+	}
+	Novice::DrawTriangle((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[1].x, (int)screenVertices[1].y, (int)screenVertices[2].x, (int)screenVertices[2].y, color, kFillModeWireFrame);
+}
+
 void Draw::DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
 	Vector3 center = Scalar(plane.distance, plane.normal);
 	Vector3 perpendiculars[4];
@@ -139,4 +156,49 @@ void Draw::DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, 
 	Novice::DrawLine((int)points[1].x, (int)points[1].y, (int)points[3].x, (int)points[3].y, color);
 	Novice::DrawLine((int)points[0].x, (int)points[0].y, (int)points[3].x, (int)points[3].y, color);
 	Novice::DrawLine((int)points[1].x, (int)points[1].y, (int)points[2].x, (int)points[2].y, color);
+}
+
+void Draw::DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+	Vector3 screenVertices[8]{};
+	float width = aabb.max.x - aabb.min.x;
+	float height = aabb.max.y - aabb.min.y;
+	Vector3 a, b, c, d, e, f, g, h;
+	a = aabb.min;
+	h = aabb.max;
+	b = { aabb.min.x + width,aabb.min.y,aabb.min.z };
+	c = { aabb.min.x,aabb.min.y + height,aabb.min.z };
+	d = { aabb.min.x + width,aabb.min.y + height,aabb.min.z };
+	e = { aabb.max.x - width,aabb.max.y - height,aabb.max.z };
+	f = { aabb.max.x,aabb.max.y - height,aabb.max.z };
+	g = { aabb.max.x - width,aabb.max.y,aabb.max.z };
+
+	for (uint32_t i = 0; i < 8; ++i) {
+		Vector3 tmp[8]{
+			{ a.x, a.y, a.z },
+			{ b.x, b.y, b.z },
+			{ c.x, c.y, c.z },
+			{ d.x, d.y, d.z },
+			{ e.x, e.y, e.z },
+			{ f.x, f.y, f.z },
+			{ g.x, g.y, g.z },
+			{ h.x, h.y, h.z }
+		};
+		//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+		Vector3 ndcVertex = Transform(tmp[i], viewProjectionMatrix);
+		//Viewport変換を行ってScreen空間へ
+		screenVertices[i] = Transform(ndcVertex, viewportMatrix);
+	}
+
+	Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[1].x, (int)screenVertices[1].y, color);
+	Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[2].x, (int)screenVertices[2].y, color);
+	Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[4].x, (int)screenVertices[4].y, color);
+	Novice::DrawLine((int)screenVertices[1].x, (int)screenVertices[1].y, (int)screenVertices[3].x, (int)screenVertices[3].y, color);
+	Novice::DrawLine((int)screenVertices[1].x, (int)screenVertices[1].y, (int)screenVertices[5].x, (int)screenVertices[5].y, color);
+	Novice::DrawLine((int)screenVertices[2].x, (int)screenVertices[2].y, (int)screenVertices[3].x, (int)screenVertices[3].y, color);
+	Novice::DrawLine((int)screenVertices[2].x, (int)screenVertices[2].y, (int)screenVertices[6].x, (int)screenVertices[6].y, color);
+	Novice::DrawLine((int)screenVertices[3].x, (int)screenVertices[3].y, (int)screenVertices[7].x, (int)screenVertices[7].y, color);
+	Novice::DrawLine((int)screenVertices[4].x, (int)screenVertices[4].y, (int)screenVertices[5].x, (int)screenVertices[5].y, color);
+	Novice::DrawLine((int)screenVertices[4].x, (int)screenVertices[4].y, (int)screenVertices[6].x, (int)screenVertices[6].y, color);
+	Novice::DrawLine((int)screenVertices[5].x, (int)screenVertices[5].y, (int)screenVertices[7].x, (int)screenVertices[7].y, color);
+	Novice::DrawLine((int)screenVertices[6].x, (int)screenVertices[6].y, (int)screenVertices[7].x, (int)screenVertices[7].y, color);
 }
