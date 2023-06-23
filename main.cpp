@@ -2,6 +2,8 @@
 #include "Draw.h"
 #include "imgui.h"
 #include "Collision.h"
+#include <algorithm>
+#include <functional>
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -57,7 +59,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		triangle.vertices[1] = Vector3{0.0f,1.0f,1.0f},
 		triangle.vertices[2] = Vector3{1.0f,0.0f,1.0f},
 	};
-	
+
+	AABB aabb1{
+		.min{-0.5f,-0.5f,-0.5f},
+		.max{0.0f,0.0f,0.0f},
+	};
+	AABB aabb2{
+		.min{0.2f,0.2f,0.2f},
+		.max{1.0f,1.0f,1.0f},
+	};
+
 	int color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -89,10 +100,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ViewportMatrixを作る
 		viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
-		lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
-		
-		if (collision->IsCollision(triangle, segment)) {
+		//lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
+		//lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
+
+		//aabbのminとmaxが入れ替わらないようにするやつ
+		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
+		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
+		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
+		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
+		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
+		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
+		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
+		aabb2.min.y = (std::min)(aabb2.min.y, aabb2.max.y);
+		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
+		aabb2.max.x = (std::max)(aabb2.min.x, aabb2.max.x);
+		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
+		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);
+
+		if (collision->IsCollision(aabb1, aabb2)) {
 			color = RED;
 		}
 		else {
@@ -103,26 +128,51 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		//線
-		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
+		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
 		//三角形
-		draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//球
 		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
 		//平面
 		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		//AABB
+		draw->DrawAABB(aabb1, worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawAABB(aabb2, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//imgui
 		ImGui::Begin("Window");
-		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("lineO", &segment.origin.x, 0.01f);
-		ImGui::DragFloat3("lineD", &segment.diff.x, 0.01f);
-		ImGui::DragFloat3("triangle1", &triangle.vertices[0].x, 0.01f);
-		ImGui::DragFloat3("triangle2", &triangle.vertices[1].x, 0.01f);
-		ImGui::DragFloat3("triangle3", &triangle.vertices[2].x, 0.01f);
-		ImGui::DragFloat3("sphereC", &sphere.center.x, 0.01f);
-		ImGui::DragFloat("sphereR", &sphere.radius, 0.01f);
-		ImGui::DragFloat3("planeN", &plane.normal.x, 0.01f);
-		ImGui::DragFloat("planeD", &plane.distance, 0.01f);
+		if (ImGui::TreeNode("camera")) {
+			ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+			ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("line")) {
+			ImGui::DragFloat3("line.origin", &segment.origin.x, 0.01f);
+			ImGui::DragFloat3("line.diff", &segment.diff.x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("triangle")) {
+			ImGui::DragFloat3("triangle.vertices1", &triangle.vertices[0].x, 0.01f);
+			ImGui::DragFloat3("triangle.vertices2", &triangle.vertices[1].x, 0.01f);
+			ImGui::DragFloat3("triangle.vertices3", &triangle.vertices[2].x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("sphere")) {
+			ImGui::DragFloat3("sphere.center", &sphere.center.x, 0.01f);
+			ImGui::DragFloat("sphere.radius", &sphere.radius, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("plane")) {
+			ImGui::DragFloat3("plane.normal", &plane.normal.x, 0.01f);
+			ImGui::DragFloat("plane.distance", &plane.distance, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("aabb")) {
+			ImGui::DragFloat3("aabb.min1", &aabb1.min.x, 0.01f);
+			ImGui::DragFloat3("aabb.max1", &aabb1.max.x, 0.01f);
+			ImGui::DragFloat3("aabb.min2", &aabb2.min.x, 0.01f);
+			ImGui::DragFloat3("aabb.max2", &aabb2.max.x, 0.01f);
+			ImGui::TreePop();
+		}
 		ImGui::End();
 
 		//plane.normal = Normalize(plane.normal);

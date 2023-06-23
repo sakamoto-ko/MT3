@@ -23,5 +23,8 @@ public:
 
 	//三角形と線の衝突
 	bool IsCollision(const Triangle& triangle, const Segment& segment);
+
+	//AABBとAABBの衝突
+	bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 };
 
