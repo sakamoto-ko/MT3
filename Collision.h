@@ -26,5 +26,8 @@ public:
 
 	//AABBとAABBの衝突
 	bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
+	//AABBと球の衝突
+	bool IsCollision(const AABB& aabb, const Sphere& sphere);
 };
 

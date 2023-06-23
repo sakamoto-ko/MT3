@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "Collision.h"
 #include <algorithm>
-#include <functional>
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -60,13 +59,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		triangle.vertices[2] = Vector3{1.0f,0.0f,1.0f},
 	};
 
-	AABB aabb1{
+	AABB aabb{
 		.min{-0.5f,-0.5f,-0.5f},
 		.max{0.0f,0.0f,0.0f},
-	};
-	AABB aabb2{
-		.min{0.2f,0.2f,0.2f},
-		.max{1.0f,1.0f,1.0f},
 	};
 
 	int color = WHITE;
@@ -104,40 +99,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
 
 		//aabbのminとmaxが入れ替わらないようにするやつ
-		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
-		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
-		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
-		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
-		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
-		aabb2.min.y = (std::min)(aabb2.min.y, aabb2.max.y);
-		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
-		aabb2.max.x = (std::max)(aabb2.min.x, aabb2.max.x);
-		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
-		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);
+		aabb.min.x = (std::min)(aabb.min.x, aabb.max.x);
+		aabb.min.y = (std::min)(aabb.min.y, aabb.max.y);
+		aabb.min.z = (std::min)(aabb.min.z, aabb.max.z);
+		aabb.max.x = (std::max)(aabb.min.x, aabb.max.x);
+		aabb.max.y = (std::max)(aabb.min.y, aabb.max.y);
+		aabb.max.z = (std::max)(aabb.min.z, aabb.max.z);
 
-		if (collision->IsCollision(aabb1, aabb2)) {
+		if (collision->IsCollision(aabb, sphere)) {
 			color = RED;
 		}
 		else {
 			color = WHITE;
 		}
 
-		//描画
-		//グリッド
-		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
-		//線
-		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
-		//三角形
-		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
-		//球
-		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
-		//平面
-		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
-		//AABB
-		draw->DrawAABB(aabb1, worldViewProjectionMatrix, viewportMatrix, color);
-		draw->DrawAABB(aabb2, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//imgui
 		ImGui::Begin("Window");
 		if (ImGui::TreeNode("camera")) {
@@ -167,15 +142,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("aabb")) {
-			ImGui::DragFloat3("aabb.min1", &aabb1.min.x, 0.01f);
-			ImGui::DragFloat3("aabb.max1", &aabb1.max.x, 0.01f);
-			ImGui::DragFloat3("aabb.min2", &aabb2.min.x, 0.01f);
-			ImGui::DragFloat3("aabb.max2", &aabb2.max.x, 0.01f);
+			ImGui::DragFloat3("aabb.min", &aabb.min.x, 0.01f);
+			ImGui::DragFloat3("aabb.max", &aabb.max.x, 0.01f);
 			ImGui::TreePop();
 		}
 		ImGui::End();
 
-		//plane.normal = Normalize(plane.normal);
+		//移動した後に正規化を忘れずに
+		plane.normal = Normalize(plane.normal);
+
+		//描画
+		//グリッド
+		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
+		//線
+		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
+		//三角形
+		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		//球
+		draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
+		//平面
+		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		//AABB
+		draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
 
 		// フレームの終了
 		Novice::EndFrame();
