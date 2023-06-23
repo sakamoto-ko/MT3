@@ -86,3 +86,42 @@ Vector3 Add(const Vector3& v, const float& a) {
 
 	return result;
 }
+
+//ベクトルとフロートの減算
+Vector3 Subtract(const Vector3& v, const float& a) {
+	Vector3 result;
+
+	result = {
+		v.x - a,
+		v.y - a,
+		v.z - a
+	};
+
+	return result;
+}
+
+//フロートとベクトルの減算
+Vector3 Subtract(const float& a, const Vector3& v) {
+	Vector3 result;
+
+	result = {
+		a - v.x,
+		a - v.y,
+		a - v.z
+	};
+
+	return result;
+}
+
+//ベクトルとベクトルの積
+//Vector3 Multiply(const Vector3& v1, Vector3& v2) {
+//	Vector3 result;
+//
+//	result = {
+//		v1.x * v2.x,
+//		v1.y * v2.y,
+//		v1.z * v2.z,
+//	};
+//
+//	return result;
+//}

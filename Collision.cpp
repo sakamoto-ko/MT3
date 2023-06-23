@@ -169,3 +169,72 @@ bool Collision::IsCollision(const AABB& aabb, const Sphere& sphere) {
 	}
 	return false;
 }
+
+//AABBと線の衝突
+bool Collision::IsCollision(const AABB& aabb, const Segment& segment) {
+	//平面
+	//X
+	Plane XPlaneMin{
+		.normal = { 1, 0, 0 },
+		.distance = aabb.min.x,
+	};
+	Plane XPlaneMax{
+		.normal = { 1, 0, 0 },
+		.distance = aabb.max.x,
+	};
+	//Y
+	Plane YPlaneMin{
+		.normal = { 0, 1, 0 },
+		.distance = aabb.min.y,
+	};
+	Plane YPlaneMax{
+		.normal = { 0, 1, 0 },
+		.distance = aabb.max.y,
+	};
+	//Z
+	Plane ZPlaneMin{
+		.normal = { 0, 0, 1 },
+		.distance = aabb.min.z,
+	};
+	Plane ZPlaneMax{
+		.normal = { 0, 0, 1 },
+		.distance = aabb.max.z,
+	};
+
+	//媒介変数t
+	float tXmin = (XPlaneMin.distance - segment.origin.x) / segment.diff.x;
+	float tXmax = (XPlaneMax.distance - segment.origin.x) / segment.diff.x;
+	float tYmin = (YPlaneMin.distance - segment.origin.y) / segment.diff.y;
+	float tYmax = (YPlaneMax.distance - segment.origin.y) / segment.diff.y;
+	float tZmin = (ZPlaneMin.distance - segment.origin.z) / segment.diff.z;
+	float tZmax = (ZPlaneMax.distance - segment.origin.z) / segment.diff.z;
+
+	//近い点
+	Vector3 tNear{
+		.x = min(tXmin, tXmax),
+		.y = min(tYmin, tYmax),
+		.z = min(tZmin, tZmax),
+	};
+	//遠い点
+	Vector3 tFar{
+		.x = max(tXmin,tXmax),
+		.y = max(tYmin,tYmax),
+		.z = max(tZmin,tZmax),
+	};
+
+	//衝突点(貫通点)
+	//小さい方
+	float tMin = max(max(tNear.x, tNear.y), tNear.z);
+	//大きい方
+	float tMax = min(min(tFar.x, tFar.y), tFar.z);
+
+	//特殊ケース
+	/*if (1) {
+		return false;
+	}*/
+
+	if (tMin <= tMax) {
+		return true;
+	}
+	return false;
+}

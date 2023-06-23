@@ -95,8 +95,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ViewportMatrixを作る
 		viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		//lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
-		//lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
+		lineLength.start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
+		lineLength.end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
 
 		//aabbのminとmaxが入れ替わらないようにするやつ
 		aabb.min.x = (std::min)(aabb.min.x, aabb.max.x);
@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		aabb.max.y = (std::max)(aabb.min.y, aabb.max.y);
 		aabb.max.z = (std::max)(aabb.min.z, aabb.max.z);
 
-		if (collision->IsCollision(aabb, sphere)) {
+		if (collision->IsCollision(aabb, segment)) {
 			color = RED;
 		}
 		else {
@@ -155,11 +155,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		//線
-		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, color);
+		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, WHITE);
 		//三角形
 		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//球
-		draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
+		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//平面
 		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//AABB

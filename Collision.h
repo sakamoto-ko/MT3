@@ -1,10 +1,13 @@
 ﻿#pragma once
 #include "Vector.h"
 #include "Matrix.h"
+#include "Draw.h"
 
 //当たり判定クラス
 class Collision
 {
+private:
+	Draw* draw = new Draw();
 public:
 	//正射影ベクトル
 	Vector3 Project(const Vector3& v1, const Vector3& v2);
@@ -29,5 +32,8 @@ public:
 
 	//AABBと球の衝突
 	bool IsCollision(const AABB& aabb, const Sphere& sphere);
+
+	//AABBと線の衝突
+	bool IsCollision(const AABB& aabb, const Segment& segment);
 };
 
