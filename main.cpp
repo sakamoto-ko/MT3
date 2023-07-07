@@ -64,6 +64,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.max{0.0f,0.0f,0.0f},
 	};
 
+	Vector3 controlPoints[3] = {
+		{ -0.8f, 0.58f ,1.0f },
+		{ 1.76f, 1.0f ,-0.3f },
+		{ 0.94f, -0.7f ,2.3f },
+	};
+
 	int color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -146,6 +152,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("aabb.max", &aabb.max.x, 0.01f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("bezier")) {
+			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
+			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
+			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
+			ImGui::TreePop();
+		}
 		ImGui::End();
 
 		//移動した後に正規化を忘れずに
@@ -155,7 +167,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		//線
-		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, WHITE);
+		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, WHITE);
 		//三角形
 		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//球
@@ -163,7 +175,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//平面
 		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//AABB
-		draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
+		//draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
+
+		//ベジエ曲線
+		draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
+			worldViewProjectionMatrix, viewportMatrix, color);
 
 		// フレームの終了
 		Novice::EndFrame();

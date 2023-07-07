@@ -202,3 +202,49 @@ void Draw::DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, con
 	Novice::DrawLine((int)screenVertices[5].x, (int)screenVertices[5].y, (int)screenVertices[7].x, (int)screenVertices[7].y, color);
 	Novice::DrawLine((int)screenVertices[6].x, (int)screenVertices[6].y, (int)screenVertices[7].x, (int)screenVertices[7].y, color);
 }
+
+Vector3 Draw::Lerp(const Vector3& v1, const Vector3& v2, float t) {
+	Vector3 result;
+	result.x = (1.0f - t) * v1.x + t * v2.x;
+	result.y = (1.0f - t) * v1.y + t * v2.y;
+	result.z = (1.0f - t) * v1.z + t * v2.z;
+	return result;
+}
+
+Vector3 Draw::Bazier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, float t) {
+	//制御点p0, p1の線形補完
+	Vector3 p0p1 = Lerp(controlPoint0, controlPoint1, t);
+	//制御点p1, p2の線形補完
+	Vector3 p1p2 = Lerp(controlPoint1, controlPoint2, t);
+	//補完点p0p1, p1p2をさらに線形補完
+	return Lerp(p0p1, p1p2, t);
+}
+
+void Draw::DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2,
+	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+	constexpr int kNumDevide = 32;
+	constexpr float kNumDevideF = float(kNumDevide);
+
+	for (int divideIndex = 0; divideIndex < kNumDevide; ++divideIndex) {
+		float t = float(divideIndex) / kNumDevideF;
+
+		Vector3 bezierPoint = Bazier(controlPoint0, controlPoint1, controlPoint2, t);
+		Vector3 bezierPointNext = Bazier(controlPoint0, controlPoint1, controlPoint2, t + 1.0f / 32.0f);
+
+		Vector3 screenVertices[2]{};
+		Vector3 ndcVertex[2]{};
+		Vector3 tmp[2] = {
+			{bezierPoint},
+			{bezierPointNext},
+		};
+		//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+		ndcVertex[0] = Transform(tmp[0], viewProjectionMatrix);
+		ndcVertex[1] = Transform(tmp[1], viewProjectionMatrix);
+		//Viewport変換を行ってScreen空間へ
+		screenVertices[0] = Transform(ndcVertex[0], viewportMatrix);
+		screenVertices[1] = Transform(ndcVertex[1], viewportMatrix);
+
+		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y,
+			(int)screenVertices[1].x, (int)screenVertices[1].y, color);
+	}
+}
