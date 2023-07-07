@@ -125,3 +125,7 @@ Vector3 Subtract(const float& a, const Vector3& v) {
 //
 //	return result;
 //}
+
+Vector3 Harf(const Vector3& v, const float& a) {
+	return Vector3{ v.x / a, v.y / a, v.z / a };
+}

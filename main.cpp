@@ -64,10 +64,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.max{0.0f,0.0f,0.0f},
 	};
 
-	Vector3 controlPoints[3] = {
+	Vector3 controlPoints[4] = {
 		{ -0.8f, 0.58f ,1.0f },
 		{ 1.76f, 1.0f ,-0.3f },
 		{ 0.94f, -0.7f ,2.3f },
+		{ -0.53f, -0.26f, -0.15f },
 	};
 
 	int color = WHITE;
@@ -158,6 +159,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("catmullRom")) {
+			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
+			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
+			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
+			ImGui::DragFloat3("controlPoints3", &controlPoints[3].x, 0.01f);
+			ImGui::TreePop();
+		}
 		ImGui::End();
 
 		//移動した後に正規化を忘れずに
@@ -178,8 +186,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
 
 		//ベジエ曲線
-		draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
+		/*draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
+			worldViewProjectionMatrix, viewportMatrix, color);*/
+		//キャトムルロム曲線
+		draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
 			worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawCatmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[0],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		for (int i = 0; i < 4; i++) {
+			draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
+		}
 
 		// フレームの終了
 		Novice::EndFrame();

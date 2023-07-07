@@ -140,13 +140,13 @@ void Draw::DrawTriangle(const Triangle& triangle, const Matrix4x4& viewProjectio
 
 void Draw::DrawPlane(const Plane& plane, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
 	Vector3 center = Scalar(plane.distance, plane.normal);
-	Vector3 perpendiculars[4];
+	Vector3 perpendiculars[4]{};
 	perpendiculars[0] = Normalize(Perpendicular(plane.normal));
 	perpendiculars[1] = { -perpendiculars[0].x,-perpendiculars[0].y,-perpendiculars[0].z };
 	perpendiculars[2] = Cross(plane.normal, perpendiculars[0]);
 	perpendiculars[3] = { -perpendiculars[2].x,-perpendiculars[2].y,-perpendiculars[2].z };
 
-	Vector3 points[4];
+	Vector3 points[4]{};
 	for (int32_t index = 0; index < 4; ++index) {
 		Vector3 extend = Scalar(2.0f, perpendiculars[index]);
 		Vector3 point = Add(center, extend);
@@ -204,7 +204,7 @@ void Draw::DrawAABB(const AABB& aabb, const Matrix4x4& viewProjectionMatrix, con
 }
 
 Vector3 Draw::Lerp(const Vector3& v1, const Vector3& v2, float t) {
-	Vector3 result;
+	Vector3 result{};
 	result.x = (1.0f - t) * v1.x + t * v2.x;
 	result.y = (1.0f - t) * v1.y + t * v2.y;
 	result.z = (1.0f - t) * v1.z + t * v2.z;
@@ -243,6 +243,49 @@ void Draw::DrawBezier(const Vector3& controlPoint0, const Vector3& controlPoint1
 		//Viewport変換を行ってScreen空間へ
 		screenVertices[0] = Transform(ndcVertex[0], viewportMatrix);
 		screenVertices[1] = Transform(ndcVertex[1], viewportMatrix);
+
+		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y,
+			(int)screenVertices[1].x, (int)screenVertices[1].y, color);
+	}
+}
+
+Vector3 Draw::CatmullRom(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Vector3& controlPoint3, float t) {
+	Vector3 a1 = Add(Subtract(Add(Scalar(-1.0f, controlPoint0), Scalar(3.0f, controlPoint1)), Scalar(3.0f, controlPoint2)), controlPoint3);
+	Vector3 a2 = Subtract(Add(Subtract(Scalar(2.0f, controlPoint0), Scalar(5.0f, controlPoint1)), Scalar(4.0f, controlPoint2)), controlPoint3);
+	Vector3 a3 = Add(Scalar(-1.0f, controlPoint0), controlPoint2);
+	Vector3 a4 = controlPoint1;
+
+	float t2 = t * t;
+	float t3 = t2 * t;
+
+	return Harf(Add(Add(Add(Scalar(t3, a1), Scalar(t2, a2)), Scalar(t, a3)), Scalar(2.0f, a4)), 2.0f);
+}
+
+void Draw::DrawCatmullRom(const Vector3& controlPoint0, const Vector3& controlPoint1, const Vector3& controlPoint2, const Vector3& controlPoint3,
+	const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color) {
+	constexpr int kNumDevide = 32;
+	constexpr float kNumDevideF = float(kNumDevide);
+
+	for (int divideIndex = 0; divideIndex < kNumDevide; ++divideIndex) {
+		float t = float(divideIndex) / kNumDevideF;
+
+		Vector3 catmullPoint = CatmullRom(controlPoint0, controlPoint1, controlPoint2, controlPoint3, t);
+		Vector3 catmullPointNext = CatmullRom(controlPoint0, controlPoint1, controlPoint2, controlPoint3, t + 1.0f / kNumDevideF);
+
+		Vector3 tmp[2] = {
+			{catmullPoint},
+			{catmullPointNext}, 
+		};
+		//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+		Vector3	ndcVertex[2] = {
+			Transform(tmp[0], viewProjectionMatrix),
+			Transform(tmp[1], viewProjectionMatrix)
+		};
+		//Viewport変換を行ってScreen空間へ
+		Vector3 screenVertices[2] = {
+			Transform(ndcVertex[0], viewportMatrix),
+			Transform(ndcVertex[1], viewportMatrix),
+		};
 
 		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y,
 			(int)screenVertices[1].x, (int)screenVertices[1].y, color);
