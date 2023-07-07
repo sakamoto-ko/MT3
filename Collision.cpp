@@ -1,5 +1,4 @@
 ﻿#include "Collision.h"
-#include <algorithm>
 
 //正射影ベクトル
 Vector3 Collision::Project(const Vector3& v1, const Vector3& v2) {

@@ -1,8 +1,6 @@
 #include "Move.h"
 #include "Draw.h"
-#include "imgui.h"
-#include "Collision.h"
-#include <algorithm>
+#include "Overroad.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -87,7 +85,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{1.0f,1.0f,1.0f},
 	};
 
-	int color = WHITE;
+	//int color = WHITE;
+
+	Vector3 a{ 0.2f,1.0f,0.0f };
+	Vector3 b{ 2.4f,3.1f,1.2f };
+	Vector3 c = a + b;
+	Vector3 d = a - b;
+	Vector3 e = a * 2.4f;
+	Vector3 rotateTest{ 0.4f,1.43f,-0.8f };
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotateTest);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -129,12 +135,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		aabb.max.y = (std::max)(aabb.min.y, aabb.max.y);
 		aabb.max.z = (std::max)(aabb.min.z, aabb.max.z);
 
-		if (collision->IsCollision(aabb, segment)) {
+		/*if (collision->IsCollision(aabb, segment)) {
 			color = RED;
 		}
 		else {
 			color = WHITE;
-		}
+		}*/
 
 		//imgui
 		ImGui::Begin("Window");
@@ -182,7 +188,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("controlPoints3", &controlPoints[3].x, 0.01f);
 			ImGui::TreePop();
 		}*/
-		if (ImGui::TreeNode("shoulder")) {
+		/*if (ImGui::TreeNode("shoulder")) {
 			ImGui::DragFloat3("translation", &translates[0].x, 0.01f);
 			ImGui::DragFloat3("rotation", &rotates[0].x, 0.01f);
 			ImGui::DragFloat3("scale", &scales[0].x, 0.01f);
@@ -198,6 +204,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("translation", &translates[2].x, 0.01f);
 			ImGui::DragFloat3("rotation", &rotates[2].x, 0.01f);
 			ImGui::DragFloat3("scale", &scales[2].x, 0.01f);
+			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("Test")) {
+			ImGui::Text("c: %f, %f, %f", c.x, c.y, c.z);
+			ImGui::Text("d: %f, %f, %f", d.x, d.y, d.z);
+			ImGui::Text("e: %f, %f, %f", e.x, e.y, e.z);
+			ImGui::Text(
+				"matrix:\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n%f, %f, %f, %f\n",
+				rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2],
+				rotateMatrix.m[0][3], rotateMatrix.m[1][0], rotateMatrix.m[1][1],
+				rotateMatrix.m[1][2], rotateMatrix.m[1][3], rotateMatrix.m[2][0],
+				rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
+				rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2],
+				rotateMatrix.m[3][3]);
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -234,7 +254,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}*/
 
 		//腕
-		draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
+		//draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
 
 		// フレームの終了
 		Novice::EndFrame();

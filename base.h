@@ -5,10 +5,12 @@
 #include <cmath>
 #include <assert.h>
 #include <iostream>
+#include <algorithm>
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "imGui.h"
 
 #define kWindowWidth 1280
 #define kWindowHeight 720

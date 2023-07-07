@@ -137,5 +137,6 @@
     <ClInclude Include="Move.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="Overroad.h" />
   </ItemGroup>
 </Project>
