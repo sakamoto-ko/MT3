@@ -71,6 +71,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{ -0.53f, -0.26f, -0.15f },
 	};
 
+	Vector3 translates[3] = {
+		{0.2f,1.0f,0.0f},
+		{0.4f,0.0f,0.0f},
+		{0.3f,0.0f,0.0f},
+	};
+	Vector3 rotates[3] = {
+		{0.0f,0.0f,-6.8f},
+		{0.0f,0.0f,-1.4f},
+		{0.0f,0.0f,0.0f},
+	};
+	Vector3 scales[3] = {
+		{1.0f,1.0f,1.0f},
+		{1.0f,1.0f,1.0f},
+		{1.0f,1.0f,1.0f},
+	};
+
 	int color = WHITE;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -127,7 +143,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("line")) {
+		/*if (ImGui::TreeNode("line")) {
 			ImGui::DragFloat3("line.origin", &segment.origin.x, 0.01f);
 			ImGui::DragFloat3("line.diff", &segment.diff.x, 0.01f);
 			ImGui::TreePop();
@@ -165,6 +181,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
 			ImGui::DragFloat3("controlPoints3", &controlPoints[3].x, 0.01f);
 			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("shoulder")) {
+			ImGui::DragFloat3("translation", &translates[0].x, 0.01f);
+			ImGui::DragFloat3("rotation", &rotates[0].x, 0.01f);
+			ImGui::DragFloat3("scale", &scales[0].x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("elbow")) {
+			ImGui::DragFloat3("translation", &translates[1].x, 0.01f);
+			ImGui::DragFloat3("rotation", &rotates[1].x, 0.01f);
+			ImGui::DragFloat3("scale", &scales[1].x, 0.01f);
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("arm")) {
+			ImGui::DragFloat3("translation", &translates[2].x, 0.01f);
+			ImGui::DragFloat3("rotation", &rotates[2].x, 0.01f);
+			ImGui::DragFloat3("scale", &scales[2].x, 0.01f);
+			ImGui::TreePop();
 		}
 		ImGui::End();
 
@@ -189,7 +223,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/*draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
 			worldViewProjectionMatrix, viewportMatrix, color);*/
 		//キャトムルロム曲線
-		draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
+		/*draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
 			worldViewProjectionMatrix, viewportMatrix, color);
 		draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
 			worldViewProjectionMatrix, viewportMatrix, color);
@@ -197,7 +231,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			worldViewProjectionMatrix, viewportMatrix, color);
 		for (int i = 0; i < 4; i++) {
 			draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
-		}
+		}*/
+
+		//腕
+		draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
 
 		// フレームの終了
 		Novice::EndFrame();
@@ -207,7 +244,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			inputManager_->GetKeys()[DIK_ESCAPE] != 0) {
 			break;
 		}
-
 	}
 	//デストラクタ
 	//delete inoutManager_ //不要

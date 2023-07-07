@@ -274,7 +274,7 @@ void Draw::DrawCatmullRom(const Vector3& controlPoint0, const Vector3& controlPo
 
 		Vector3 tmp[2] = {
 			{catmullPoint},
-			{catmullPointNext}, 
+			{catmullPointNext},
 		};
 		//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
 		Vector3	ndcVertex[2] = {
@@ -290,4 +290,35 @@ void Draw::DrawCatmullRom(const Vector3& controlPoint0, const Vector3& controlPo
 		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y,
 			(int)screenVertices[1].x, (int)screenVertices[1].y, color);
 	}
+}
+
+void Draw::DrawArm(Vector3 translates[3], Vector3 rotates[3], Vector3 scales[3], const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
+	Matrix4x4 sholderMatrix{ MakeAffineMatrix(scales[0],rotates[0],translates[0]) };
+	Matrix4x4 elbowMatrix{ MakeAffineMatrix(scales[1],rotates[1],translates[1]) };
+	Matrix4x4 handMatrix{ MakeAffineMatrix(scales[2],rotates[2],translates[2]) };
+
+	Matrix4x4 sholderWorldMatrix = sholderMatrix;
+	Matrix4x4 elbowWorldMatrix = Multiply(elbowMatrix, sholderWorldMatrix);
+	Matrix4x4 handWorldMatrix = Multiply(handMatrix, elbowWorldMatrix);
+
+	DrawSphere(Sphere(Vector3(sholderWorldMatrix.m[3][0], sholderWorldMatrix.m[3][1], sholderWorldMatrix.m[3][2]), 0.1f), viewProjectionMatrix, viewportMatrix, RED);
+	DrawSphere(Sphere(Vector3(elbowWorldMatrix.m[3][0], elbowWorldMatrix.m[3][1], elbowWorldMatrix.m[3][2]), 0.1f), viewProjectionMatrix, viewportMatrix, GREEN);
+	DrawSphere(Sphere(Vector3(handWorldMatrix.m[3][0], handWorldMatrix.m[3][1], handWorldMatrix.m[3][2]), 0.1f), viewProjectionMatrix, viewportMatrix, BLUE);
+
+	Vector3 tmp[3] = {
+		{Vector3(sholderWorldMatrix.m[3][0], sholderWorldMatrix.m[3][1], sholderWorldMatrix.m[3][2])},
+		{Vector3(elbowWorldMatrix.m[3][0], elbowWorldMatrix.m[3][1], elbowWorldMatrix.m[3][2])},
+		{Vector3(handWorldMatrix.m[3][0], handWorldMatrix.m[3][1], handWorldMatrix.m[3][2])},
+	};
+	Vector3	ndcVertex[3] = {
+		{Transform(tmp[0], viewProjectionMatrix)},
+		{Transform(tmp[1], viewProjectionMatrix)},
+		{Transform(tmp[2], viewProjectionMatrix)},
+	};
+	Vector3 sholderTranslate = Transform(ndcVertex[0], viewportMatrix);
+	Vector3 elbowTranslate = Transform(ndcVertex[1], viewportMatrix);
+	Vector3 handTranslate = Transform(ndcVertex[2], viewportMatrix);
+
+	Novice::DrawLine((int)sholderTranslate.x, (int)sholderTranslate.y, (int)elbowTranslate.x, (int)elbowTranslate.y, WHITE);
+	Novice::DrawLine((int)elbowTranslate.x, (int)elbowTranslate.y, (int)handTranslate.x, (int)handTranslate.y, WHITE);
 }
