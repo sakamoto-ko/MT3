@@ -64,6 +64,23 @@ struct AABB {
 	Vector3 max;//最大点
 };
 
+struct Spring {
+	//アンカー。固定された端の位置
+	Vector3 anchor;
+	float naturalLength;//自然長
+	float stiffness;//合成。ばね定数k
+	float damplingCoefficient;//減衰係数
+};
+
+struct Ball {
+	Vector3 positon;//ボールの位置
+	Vector3 velocity;//ボールの速度
+	Vector3 acceleration;//ボールの加速度
+	float mass;//ボールの質量
+	float radius;//ボールの半径
+	unsigned int color;//ボールの色
+};
+
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
 
 float Cot(float a);

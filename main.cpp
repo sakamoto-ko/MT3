@@ -85,15 +85,49 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{1.0f,1.0f,1.0f},
 	};
 
+	Spring spring{};
+	spring.anchor = { 0.0f,0.0f,0.0f };
+	spring.naturalLength = 1.0f;
+	spring.stiffness = 100.0f;
+	spring.damplingCoefficient = 2.0f;
+
+	Ball ball{};
+	ball.positon = { 1.2f,0.0f,0.0f };
+	ball.mass = 2.0f;
+	ball.radius = 0.05f;
+	ball.color = BLUE;
+
+	float deltaTime = 1.0f / 60.0f;
+
+	Vector3 diff = ball.positon - spring.anchor;
+	float length = Length(diff);
+	if (length != 0.0f) {
+		Vector3 direction = Normalize(diff);
+		Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
+		Vector3 displacement = length * (ball.positon - restPosition);
+		Vector3 restoringForce = -spring.stiffness * displacement;
+		//減衰抵抗を計算する
+		Vector3 damplingForce = -spring.damplingCoefficient * ball.velocity;
+		//減衰抵抗も神して、物体にかかる力を決定する
+		Vector3 force = restoringForce + damplingForce;
+		ball.acceleration = force / ball.mass;
+	}
+	//加速度も速度もどちらも秒を基準とした値である
+	//それが、1/60秒間(deltaTime)適用されたと考える
+	ball.velocity = Add(ball.velocity, ball.acceleration * deltaTime);
+	ball.positon = Add(ball.positon, ball.velocity * deltaTime);
+
+	int isStart = false;
+
 	//int color = WHITE;
 
-	Vector3 a{ 0.2f,1.0f,0.0f };
+	/*Vector3 a{ 0.2f,1.0f,0.0f };
 	Vector3 b{ 2.4f,3.1f,1.2f };
 	Vector3 c = a + b;
 	Vector3 d = a - b;
 	Vector3 e = a * 2.4f;
 	Vector3 rotateTest{ 0.4f,1.43f,-0.8f };
-	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotateTest);
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotateTest);*/
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -141,6 +175,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		else {
 			color = WHITE;
 		}*/
+
+		if (isStart) {
+			diff = ball.positon - spring.anchor;
+			length = Length(diff);
+			if (length != 0.0f) {
+				Vector3 direction = Normalize(diff);
+				Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
+				Vector3 displacement = length * (ball.positon - restPosition);
+				Vector3 restoringForce = -spring.stiffness * displacement;
+				//減衰抵抗を計算する
+				Vector3 damplingForce = -spring.damplingCoefficient * ball.velocity;
+				//減衰抵抗も神して、物体にかかる力を決定する
+				Vector3 force = restoringForce + damplingForce;
+				ball.acceleration = force / ball.mass;
+			}
+			//加速度も速度もどちらも秒を基準とした値である
+			//それが、1/60秒間(deltaTime)適用されたと考える
+			ball.velocity = Add(ball.velocity, ball.acceleration * deltaTime);
+			ball.positon = Add(ball.positon, ball.velocity * deltaTime);
+		}
 
 		//imgui
 		ImGui::Begin("Window");
@@ -206,7 +260,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("scale", &scales[2].x, 0.01f);
 			ImGui::TreePop();
 		}*/
-		if (ImGui::TreeNode("Test")) {
+		/*if (ImGui::TreeNode("Test")) {
 			ImGui::Text("c: %f, %f, %f", c.x, c.y, c.z);
 			ImGui::Text("d: %f, %f, %f", d.x, d.y, d.z);
 			ImGui::Text("e: %f, %f, %f", e.x, e.y, e.z);
@@ -218,6 +272,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
 				rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2],
 				rotateMatrix.m[3][3]);
+			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("Spring")) {
+			if (ImGui::Button("Start")) {
+				isStart = true;
+			}
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -242,19 +302,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ベジエ曲線
 		/*draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
 			worldViewProjectionMatrix, viewportMatrix, color);*/
-		//キャトムルロム曲線
-		/*draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
-			worldViewProjectionMatrix, viewportMatrix, color);
-		draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
-			worldViewProjectionMatrix, viewportMatrix, color);
-		draw->DrawCatmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[0],
-			worldViewProjectionMatrix, viewportMatrix, color);
-		for (int i = 0; i < 4; i++) {
-			draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
-		}*/
+			//キャトムルロム曲線
+			/*draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
+				worldViewProjectionMatrix, viewportMatrix, color);
+			draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
+				worldViewProjectionMatrix, viewportMatrix, color);
+			draw->DrawCatmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[0],
+				worldViewProjectionMatrix, viewportMatrix, color);
+			for (int i = 0; i < 4; i++) {
+				draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
+			}*/
 
-		//腕
-		//draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
+			//腕
+			//draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
+
+			//ばね
+		Vector3 screenVertices[2]{};
+		for (uint32_t i = 0; i < 2; ++i) {
+			Vector3 tmp[2]{
+				{ spring.anchor.x, spring.anchor.y, spring.anchor.z },
+				{ ball.positon.x, ball.positon.y, ball.positon.z },
+			};
+			//NDCまで変換。Transformを使うと、同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+			Vector3 ndcVertex = Transform(tmp[i], worldViewProjectionMatrix);
+			//Viewport変換を行ってScreen空間へ
+			screenVertices[i] = Transform(ndcVertex, viewportMatrix);
+		}
+		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[1].x, (int)screenVertices[1].y, WHITE);
+		draw->DrawSphere(Sphere(ball.positon, ball.radius), worldViewProjectionMatrix, viewportMatrix, ball.color);
 
 		// フレームの終了
 		Novice::EndFrame();

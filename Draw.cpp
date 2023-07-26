@@ -322,3 +322,24 @@ void Draw::DrawArm(Vector3 translates[3], Vector3 rotates[3], Vector3 scales[3],
 	Novice::DrawLine((int)sholderTranslate.x, (int)sholderTranslate.y, (int)elbowTranslate.x, (int)elbowTranslate.y, WHITE);
 	Novice::DrawLine((int)elbowTranslate.x, (int)elbowTranslate.y, (int)handTranslate.x, (int)handTranslate.y, WHITE);
 }
+
+//void Draw::DrawSpring(Ball ball, Spring spring, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
+//	float deltaTime = 1.0f / 60.0f;
+//
+//	Vector3 diff = ball.positon - spring.anchor;
+//	float length = Length(diff);
+//	if (length != 0.0f) {
+//		Vector3 direction = Normalize(diff);
+//		Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
+//		Vector3 displacement = length * (ball.positon - restPosition);
+//		Vector3 restoringForce = -spring.stiffness * displacement;
+//		Vector3 force = restoringForce;
+//		ball.acceleration = force / ball.mass;
+//	}
+//	//加速度も速度もどちらも秒を基準とした値である
+//	//それが、1/60秒間(deltaTime)適用されたと考える
+//	ball.velocity = Add(ball.velocity, ball.acceleration * deltaTime);
+//	ball.positon = Add(ball.positon, ball.velocity * deltaTime);
+//
+//	DrawSphere(Sphere(ball.positon, ball.radius), viewProjectionMatrix, viewportMatrix, ball.color);
+//}
