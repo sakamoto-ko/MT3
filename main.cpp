@@ -86,16 +86,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 
 	Spring spring{};
-	spring.anchor = { 0.0f,0.0f,0.0f };
-	spring.naturalLength = 1.0f;
+	spring.anchor = { 0.0f,1.0f,0.0f };
+	spring.naturalLength = 0.7f;
 	spring.stiffness = 100.0f;
 	spring.damplingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.positon = { 1.2f,0.0f,0.0f };
+	ball.positon = { 0.8f,0.2f,0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
+
+	const Vector3 kGravity{ 0.0f,-9.8f,0.0f };
 
 	float deltaTime = 1.0f / 60.0f;
 
@@ -109,7 +111,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//減衰抵抗を計算する
 		Vector3 damplingForce = -spring.damplingCoefficient * ball.velocity;
 		//減衰抵抗も神して、物体にかかる力を決定する
-		Vector3 force = restoringForce + damplingForce;
+		Vector3 force = restoringForce + damplingForce + kGravity;
 		ball.acceleration = force / ball.mass;
 	}
 	//加速度も速度もどちらも秒を基準とした値である
@@ -187,7 +189,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//減衰抵抗を計算する
 				Vector3 damplingForce = -spring.damplingCoefficient * ball.velocity;
 				//減衰抵抗も神して、物体にかかる力を決定する
-				Vector3 force = restoringForce + damplingForce;
+				Vector3 force = restoringForce + damplingForce + kGravity;
 				ball.acceleration = force / ball.mass;
 			}
 			//加速度も速度もどちらも秒を基準とした値である
