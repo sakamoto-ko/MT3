@@ -104,6 +104,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float deltaTime = 1.0f / 60.0f;
 
+	float angulerVelocity = 3.14f;
+	float angle = 0.0f;
+	float radius = 0.8f;
+
+	Sphere circle = {
+	.center = {0.0f,0.0f,0.0f},
+	};
+
 	Vector3 diff = ball.positon - spring.anchor;
 	float length = Length(diff);
 	if (length != 0.0f) {
@@ -123,7 +131,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ball.velocity = Add(ball.velocity, ball.acceleration * deltaTime);
 	ball.positon = Add(ball.positon, ball.velocity * deltaTime);
 
-	int isStart = false;
+	int isSpringStart = false;
+	int isCircleStart = false;
 
 	//int color = WHITE;
 
@@ -182,7 +191,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			color = WHITE;
 		}*/
 
-		if (isStart) {
+		if (isSpringStart) {
 			diff = ball.positon - spring.anchor;
 			length = Length(diff);
 			if (length != 0.0f) {
@@ -201,6 +210,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//それが、1/60秒間(deltaTime)適用されたと考える
 			ball.velocity = Add(ball.velocity, ball.acceleration * deltaTime);
 			ball.positon = Add(ball.positon, ball.velocity * deltaTime);
+		}
+		if (isCircleStart) {
+			angle += angulerVelocity * deltaTime;
+
+			ball.positon.x = circle.center.x + std::cos(angle) * radius;
+			ball.positon.y = circle.center.y + std::sin(angle) * radius;
+			ball.positon.z = circle.center.z;
 		}
 
 		//imgui
@@ -281,9 +297,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				rotateMatrix.m[3][3]);
 			ImGui::TreePop();
 		}*/
-		if (ImGui::TreeNode("Spring")) {
+		/*if (ImGui::TreeNode("Spring")) {
 			if (ImGui::Button("Start")) {
-				isStart = true;
+				isSpringStart = true;
+			}
+			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("CircleMove")) {
+			if (ImGui::Button("Start")) {
+				isCircleStart = true;
 			}
 			ImGui::TreePop();
 		}
