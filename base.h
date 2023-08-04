@@ -89,6 +89,14 @@ struct Pendulum {
 	float angluerAcceleration;//角加速度
 };
 
+struct ConicalPendulum {
+	Vector3 anchor; //アンカーポイント。固定された橋の位置
+	float length;//紐の長さ
+	float halfApexAngle;//延髄の頂角の半分	
+	float angle;//現在の角度
+	float angulerVelocity;//角速度ω
+};
+
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
 
 float Cot(float a);

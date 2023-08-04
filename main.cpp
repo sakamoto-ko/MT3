@@ -127,7 +127,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float angulerVelocity = 3.14f;
 	float angle = 0.0f;
-	float radius = 0.8f;
+	//float radius = 0.8f;
 
 	Sphere circle = {
 	.center = {0.0f,0.0f,0.0f},
@@ -142,11 +142,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	pendulum.angulerVelocity = 0.0f;
 	pendulum.angluerAcceleration = 0.0f;
 
-	ball.positon.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
-	ball.positon.y = -pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
-	ball.positon.z = pendulum.anchor.z;
-
 	int isPendulumStart = false;
+
+	ConicalPendulum conicalPendulum;
+	conicalPendulum.anchor = { 0.0f,0.5f,0.0f };
+	conicalPendulum.length = 0.8f;
+	conicalPendulum.halfApexAngle = 0.7f;
+	conicalPendulum.angle = 0.0f;
+	conicalPendulum.angulerVelocity = 0.0f;
+
+	int isConicalPendulumStart = false;
+
+	float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
+	float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
+
+	ball.positon.x = conicalPendulum.anchor.x + std::cos(conicalPendulum.angle) * radius;
+	ball.positon.y = -conicalPendulum.anchor.y - height;
+	ball.positon.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
 
 	//int color = WHITE;
 
@@ -242,6 +254,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.positon.y = -pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
 			ball.positon.z = pendulum.anchor.z;
 		}
+		if (isConicalPendulumStart) {
+			conicalPendulum.angulerVelocity = std::sqrt(9.8f / (conicalPendulum.length * std::cos(conicalPendulum.halfApexAngle)));
+			conicalPendulum.angle += conicalPendulum.angulerVelocity * deltaTime;
+
+			ball.positon.x = conicalPendulum.anchor.x + std::cos(conicalPendulum.angle) * radius;
+			ball.positon.y = -conicalPendulum.anchor.y - height;
+			ball.positon.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
+		}
 
 		//imgui
 		ImGui::Begin("Window");
@@ -334,10 +354,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::TreePop();
 		}
 		ImGui::End();*/
-		if (ImGui::TreeNode("Pendulum")) {
+		/*if (ImGui::TreeNode("Pendulum")) {
 			if (ImGui::Button("Start")) {
 				isPendulumStart = true;
 			}
+			ImGui::TreePop();
+		}
+		ImGui::End();*/
+		if (ImGui::TreeNode("ConicalPendulumStart")) {
+			if (ImGui::Button("Start")) {
+				isConicalPendulumStart = true;
+			}
+			ImGui::SliderFloat("Length", &conicalPendulum.length, 0, 5);
+			ImGui::SliderFloat("halfApexAngle", &conicalPendulum.halfApexAngle, 0, 5);
 			ImGui::TreePop();
 		}
 		ImGui::End();
