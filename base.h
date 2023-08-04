@@ -81,6 +81,14 @@ struct Ball {
 	unsigned int color;//ボールの色
 };
 
+struct Pendulum {
+	Vector3 anchor; //アンカーポイント。固定された橋の位置
+	float length;//紐の長さ
+	float angle;//現在の角度
+	float angulerVelocity;//角速度ω
+	float angluerAcceleration;//角加速度
+};
+
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
 
 float Cot(float a);

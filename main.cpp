@@ -104,14 +104,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float deltaTime = 1.0f / 60.0f;
 
-	float angulerVelocity = 3.14f;
-	float angle = 0.0f;
-	float radius = 0.8f;
-
-	Sphere circle = {
-	.center = {0.0f,0.0f,0.0f},
-	};
-
 	Vector3 diff = ball.positon - spring.anchor;
 	float length = Length(diff);
 	if (length != 0.0f) {
@@ -132,7 +124,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ball.positon = Add(ball.positon, ball.velocity * deltaTime);
 
 	int isSpringStart = false;
+
+	float angulerVelocity = 3.14f;
+	float angle = 0.0f;
+	float radius = 0.8f;
+
+	Sphere circle = {
+	.center = {0.0f,0.0f,0.0f},
+	};
+
 	int isCircleStart = false;
+
+	Pendulum pendulum;
+	pendulum.anchor = { 0.0f,0.5f,0.0f };
+	pendulum.length = 0.8f;
+	pendulum.angle = 0.7f;
+	pendulum.angulerVelocity = 0.0f;
+	pendulum.angluerAcceleration = 0.0f;
+
+	ball.positon.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
+	ball.positon.y = -pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
+	ball.positon.z = pendulum.anchor.z;
+
+	int isPendulumStart = false;
 
 	//int color = WHITE;
 
@@ -217,6 +231,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.positon.x = circle.center.x + std::cos(angle) * radius;
 			ball.positon.y = circle.center.y + std::sin(angle) * radius;
 			ball.positon.z = circle.center.z;
+		}
+		if (isPendulumStart) {
+			pendulum.angluerAcceleration = -(9.8f / pendulum.length) * std::sin(pendulum.angle);
+			pendulum.angulerVelocity += pendulum.angluerAcceleration * deltaTime;
+			pendulum.angle += pendulum.angulerVelocity * deltaTime;
+
+			//pは振り子の先端の位置。取り付けたいものを取り付ければよい
+			ball.positon.x = pendulum.anchor.x + std::sin(pendulum.angle) * pendulum.length;
+			ball.positon.y = -pendulum.anchor.y - std::cos(pendulum.angle) * pendulum.length;
+			ball.positon.z = pendulum.anchor.z;
 		}
 
 		//imgui
@@ -303,9 +327,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			ImGui::TreePop();
 		}*/
-		if (ImGui::TreeNode("CircleMove")) {
+		/*if (ImGui::TreeNode("CircleMove")) {
 			if (ImGui::Button("Start")) {
 				isCircleStart = true;
+			}
+			ImGui::TreePop();
+		}
+		ImGui::End();*/
+		if (ImGui::TreeNode("Pendulum")) {
+			if (ImGui::Button("Start")) {
+				isPendulumStart = true;
 			}
 			ImGui::TreePop();
 		}
