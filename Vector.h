@@ -30,6 +30,8 @@ Vector3 Subtract(const Vector3& v, const float& a);
 Vector3 Subtract(const float& a, const Vector3& v);
 
 //ベクトルとベクトルの積
-Vector3 Multiply(const Vector3& v1, Vector3& v2);
+Vector3 Multiply(const Vector3& v1, const Vector3& v2);
 
 Vector3 Harf(const Vector3& v, const float& a);
+
+Vector3 Reflect(const Vector3& input, const Vector3& normal);

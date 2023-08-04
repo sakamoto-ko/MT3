@@ -97,6 +97,11 @@ struct ConicalPendulum {
 	float angulerVelocity;//角速度ω
 };
 
+struct Capsule {
+	Segment segment;
+	float radius;
+};
+
 int GetColor(unsigned int red, unsigned int  green, unsigned int  blue, int  alpha);
 
 float Cot(float a);

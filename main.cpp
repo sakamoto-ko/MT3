@@ -49,7 +49,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Sphere sphere = { Vector3{0.0f,0.0f,0.0f},1.0f };
 
-	Plane plane = { Vector3{0.0f,1.0f,0.0f},1.0f };
+	Plane plane = { Vector3{-0.2f, 0.9f, -0.3f},0.0f };
 
 	Triangle triangle = {
 		triangle.vertices[0] = Vector3{-1.0f,0.0f,1.0f},
@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	spring.damplingCoefficient = 2.0f;
 
 	Ball ball{};
-	ball.positon = { 1.2f,0.0f,0.0f };
+	ball.positon = { 0.8f,1.2f,0.3f };
 	//ball.positon = { 0.8f,0.2f,0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
@@ -156,9 +156,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float radius = std::sin(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 	float height = std::cos(conicalPendulum.halfApexAngle) * conicalPendulum.length;
 
-	ball.positon.x = conicalPendulum.anchor.x + std::cos(conicalPendulum.angle) * radius;
-	ball.positon.y = -conicalPendulum.anchor.y - height;
-	ball.positon.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
+	float e = 1.0f;
+
+	ball.acceleration = { 0.0f,-9.8f,0.0f };
+
+	ball.velocity = ball.velocity + ball.acceleration * deltaTime;
+	ball.positon = ball.positon + ball.velocity * deltaTime;
+
+	int isFallStart = false;
 
 	//int color = WHITE;
 
@@ -262,6 +267,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.positon.y = -conicalPendulum.anchor.y - height;
 			ball.positon.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
 		}
+		if (isFallStart) {
+			ball.velocity = ball.velocity + ball.acceleration * deltaTime;
+			ball.positon = ball.positon + ball.velocity * deltaTime;
+			if (collision->IsCollision(Sphere{ ball.positon, ball.radius }, plane)) {
+				ball.velocity = Reflect(ball.velocity, plane.normal) * e;
+			}
+		}
 
 		//imgui
 		ImGui::Begin("Window");
@@ -274,16 +286,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("line.origin", &segment.origin.x, 0.01f);
 			ImGui::DragFloat3("line.diff", &segment.diff.x, 0.01f);
 			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("triangle")) {
+		}*/
+		/*if (ImGui::TreeNode("triangle")) {
 			ImGui::DragFloat3("triangle.vertices1", &triangle.vertices[0].x, 0.01f);
 			ImGui::DragFloat3("triangle.vertices2", &triangle.vertices[1].x, 0.01f);
 			ImGui::DragFloat3("triangle.vertices3", &triangle.vertices[2].x, 0.01f);
 			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("sphere")) {
+		}*/
+		/*if (ImGui::TreeNode("sphere")) {
 			ImGui::DragFloat3("sphere.center", &sphere.center.x, 0.01f);
 			ImGui::DragFloat("sphere.radius", &sphere.radius, 0.01f);
+			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("Ball")) {
+			ImGui::DragFloat3("Ball.center", &ball.positon.x, 0.01f);
+			ImGui::DragFloat("Ball.radius", &ball.radius, 0.01f);
 			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("plane")) {
@@ -291,18 +308,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat("plane.distance", &plane.distance, 0.01f);
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("aabb")) {
+		/*if (ImGui::TreeNode("aabb")) {
 			ImGui::DragFloat3("aabb.min", &aabb.min.x, 0.01f);
 			ImGui::DragFloat3("aabb.max", &aabb.max.x, 0.01f);
 			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("bezier")) {
+		}*/
+		/*if (ImGui::TreeNode("bezier")) {
 			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
 			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
 			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("catmullRom")) {
+		}*/
+		/*if (ImGui::TreeNode("catmullRom")) {
 			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
 			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
@@ -361,12 +378,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::TreePop();
 		}
 		ImGui::End();*/
-		if (ImGui::TreeNode("ConicalPendulumStart")) {
+		/*if (ImGui::TreeNode("ConicalPendulumStart")) {
 			if (ImGui::Button("Start")) {
 				isConicalPendulumStart = true;
 			}
 			ImGui::SliderFloat("Length", &conicalPendulum.length, 0, 5);
 			ImGui::SliderFloat("halfApexAngle", &conicalPendulum.halfApexAngle, 0, 5);
+			ImGui::TreePop();
+		}*/
+		if (ImGui::TreeNode("Fall")) {
+			if (ImGui::Button("Start")) {
+				isFallStart = true;
+			}
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -384,7 +407,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//球
 		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//平面
-		//draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//AABB
 		//draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
 
@@ -417,7 +440,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Viewport変換を行ってScreen空間へ
 			screenVertices[i] = Transform(ndcVertex, viewportMatrix);
 		}
-		Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[1].x, (int)screenVertices[1].y, WHITE);
+		//Novice::DrawLine((int)screenVertices[0].x, (int)screenVertices[0].y, (int)screenVertices[1].x, (int)screenVertices[1].y, WHITE);
 		draw->DrawSphere(Sphere(ball.positon, ball.radius), worldViewProjectionMatrix, viewportMatrix, ball.color);
 
 		// フレームの終了
