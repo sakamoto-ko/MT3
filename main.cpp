@@ -95,12 +95,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Ball ball{};
 	ball.positon = { 0.8f,1.2f,0.3f };
-	//ball.positon = { 0.8f,0.2f,0.0f };
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
 
-	const Vector3 kGravity{ 0.0f,-9.8f,0.0f };
+	Vector3 kGravity{ 0.0f,-9.8f,0.0f };
 
 	float deltaTime = 1.0f / 60.0f;
 
@@ -158,14 +157,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	float e = 1.0f;
 
-	ball.acceleration = { 0.0f,-9.8f,0.0f };
+	ball.acceleration = { 0.0f,0.0f,0.0f };
 
 	ball.velocity = ball.velocity + ball.acceleration * deltaTime;
 	ball.positon = ball.positon + ball.velocity * deltaTime;
 
 	int isFallStart = false;
 
-	//int color = WHITE;
+	int color = WHITE;
 
 	/*Vector3 a{ 0.2f,1.0f,0.0f };
 	Vector3 b{ 2.4f,3.1f,1.2f };
@@ -268,6 +267,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ball.positon.z = conicalPendulum.anchor.z - std::sin(conicalPendulum.angle) * radius;
 		}
 		if (isFallStart) {
+			ball.acceleration = kGravity;
 			ball.velocity = ball.velocity + ball.acceleration * deltaTime;
 			ball.positon = ball.positon + ball.velocity * deltaTime;
 			if (collision->IsCollision(Sphere{ ball.positon, ball.radius }, plane)) {
@@ -282,22 +282,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 			ImGui::TreePop();
 		}
-		/*if (ImGui::TreeNode("line")) {
+		if (ImGui::TreeNode("line")) {
 			ImGui::DragFloat3("line.origin", &segment.origin.x, 0.01f);
 			ImGui::DragFloat3("line.diff", &segment.diff.x, 0.01f);
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("triangle")) {
+		}
+		if (ImGui::TreeNode("triangle")) {
 			ImGui::DragFloat3("triangle.vertices1", &triangle.vertices[0].x, 0.01f);
 			ImGui::DragFloat3("triangle.vertices2", &triangle.vertices[1].x, 0.01f);
 			ImGui::DragFloat3("triangle.vertices3", &triangle.vertices[2].x, 0.01f);
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("sphere")) {
+		}
+		if (ImGui::TreeNode("sphere")) {
 			ImGui::DragFloat3("sphere.center", &sphere.center.x, 0.01f);
 			ImGui::DragFloat("sphere.radius", &sphere.radius, 0.01f);
 			ImGui::TreePop();
-		}*/
+		}
 		if (ImGui::TreeNode("Ball")) {
 			ImGui::DragFloat3("Ball.center", &ball.positon.x, 0.01f);
 			ImGui::DragFloat("Ball.radius", &ball.radius, 0.01f);
@@ -308,42 +308,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat("plane.distance", &plane.distance, 0.01f);
 			ImGui::TreePop();
 		}
-		/*if (ImGui::TreeNode("aabb")) {
+		if (ImGui::TreeNode("aabb")) {
 			ImGui::DragFloat3("aabb.min", &aabb.min.x, 0.01f);
 			ImGui::DragFloat3("aabb.max", &aabb.max.x, 0.01f);
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("bezier")) {
+		}
+		if (ImGui::TreeNode("bezier")) {
 			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
 			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("catmullRom")) {
+		}
+		if (ImGui::TreeNode("catmullRom")) {
 			ImGui::DragFloat3("controlPoints0", &controlPoints[0].x, 0.01f);
 			ImGui::DragFloat3("controlPoints1", &controlPoints[1].x, 0.01f);
 			ImGui::DragFloat3("controlPoints2", &controlPoints[2].x, 0.01f);
 			ImGui::DragFloat3("controlPoints3", &controlPoints[3].x, 0.01f);
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("shoulder")) {
-			ImGui::DragFloat3("translation", &translates[0].x, 0.01f);
-			ImGui::DragFloat3("rotation", &rotates[0].x, 0.01f);
-			ImGui::DragFloat3("scale", &scales[0].x, 0.01f);
-			ImGui::TreePop();
-		}
-		if (ImGui::TreeNode("elbow")) {
-			ImGui::DragFloat3("translation", &translates[1].x, 0.01f);
-			ImGui::DragFloat3("rotation", &rotates[1].x, 0.01f);
-			ImGui::DragFloat3("scale", &scales[1].x, 0.01f);
-			ImGui::TreePop();
 		}
 		if (ImGui::TreeNode("arm")) {
-			ImGui::DragFloat3("translation", &translates[2].x, 0.01f);
-			ImGui::DragFloat3("rotation", &rotates[2].x, 0.01f);
-			ImGui::DragFloat3("scale", &scales[2].x, 0.01f);
+			if (ImGui::TreeNode("shoulder")) {
+				ImGui::DragFloat3("translation", &translates[0].x, 0.01f);
+				ImGui::DragFloat3("rotation", &rotates[0].x, 0.01f);
+				ImGui::DragFloat3("scale", &scales[0].x, 0.01f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("elbow")) {
+				ImGui::DragFloat3("translation", &translates[1].x, 0.01f);
+				ImGui::DragFloat3("rotation", &rotates[1].x, 0.01f);
+				ImGui::DragFloat3("scale", &scales[1].x, 0.01f);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("hand")) {
+				ImGui::DragFloat3("translation", &translates[2].x, 0.01f);
+				ImGui::DragFloat3("rotation", &rotates[2].x, 0.01f);
+				ImGui::DragFloat3("scale", &scales[2].x, 0.01f);
+				ImGui::TreePop();
+			}
 			ImGui::TreePop();
-		}*/
+		}
 		/*if (ImGui::TreeNode("Test")) {
 			ImGui::Text("c: %f, %f, %f", c.x, c.y, c.z);
 			ImGui::Text("d: %f, %f, %f", d.x, d.y, d.z);
@@ -358,38 +361,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				rotateMatrix.m[3][3]);
 			ImGui::TreePop();
 		}*/
-		/*if (ImGui::TreeNode("Spring")) {
+		if (ImGui::TreeNode("Spring")) {
 			if (ImGui::Button("Start")) {
 				isSpringStart = true;
 			}
 			ImGui::TreePop();
-		}*/
-		/*if (ImGui::TreeNode("CircleMove")) {
+		}
+		if (ImGui::TreeNode("CircleMove")) {
 			if (ImGui::Button("Start")) {
 				isCircleStart = true;
 			}
+			ImGui::SliderFloat3("center", &circle.center.x, 0, 10);
 			ImGui::TreePop();
 		}
-		ImGui::End();*/
-		/*if (ImGui::TreeNode("Pendulum")) {
+		if (ImGui::TreeNode("Pendulum")) {
 			if (ImGui::Button("Start")) {
 				isPendulumStart = true;
 			}
+			ImGui::SliderFloat("Length", &pendulum.length, 0, 5);
 			ImGui::TreePop();
 		}
-		ImGui::End();*/
-		/*if (ImGui::TreeNode("ConicalPendulumStart")) {
+		if (ImGui::TreeNode("ConicalPendulumStart")) {
 			if (ImGui::Button("Start")) {
 				isConicalPendulumStart = true;
 			}
 			ImGui::SliderFloat("Length", &conicalPendulum.length, 0, 5);
 			ImGui::SliderFloat("halfApexAngle", &conicalPendulum.halfApexAngle, 0, 5);
 			ImGui::TreePop();
-		}*/
+		}
 		if (ImGui::TreeNode("Fall")) {
 			if (ImGui::Button("Start")) {
 				isFallStart = true;
 			}
+			ImGui::SliderFloat3("Gravity", &kGravity.x, 0.0f, 10.0f);
+			ImGui::SliderFloat("ReflectionCoefficient", &e, 0, 1);
 			ImGui::TreePop();
 		}
 		ImGui::End();
@@ -401,34 +406,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//グリッド
 		draw->DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		//線
-		//Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, WHITE);
+		Novice::DrawLine((int)lineLength.start.x, (int)lineLength.start.y, (int)lineLength.end.x, (int)lineLength.end.y, WHITE);
 		//三角形
-		//draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		draw->DrawTriangle(triangle, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//球
-		//draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		draw->DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//平面
 		draw->DrawPlane(plane, worldViewProjectionMatrix, viewportMatrix, WHITE);
 		//AABB
-		//draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
 
 		//ベジエ曲線
-		/*draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
-			worldViewProjectionMatrix, viewportMatrix, color);*/
-			//キャトムルロム曲線
-			/*draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
-				worldViewProjectionMatrix, viewportMatrix, color);
-			draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
-				worldViewProjectionMatrix, viewportMatrix, color);
-			draw->DrawCatmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[0],
-				worldViewProjectionMatrix, viewportMatrix, color);
-			for (int i = 0; i < 4; i++) {
-				draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
-			}*/
+		draw->DrawBezier(controlPoints[0], controlPoints[1], controlPoints[2],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		//キャトムルロム曲線
+		draw->DrawCatmullRom(controlPoints[3], controlPoints[0], controlPoints[1], controlPoints[2],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawCatmullRom(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		draw->DrawCatmullRom(controlPoints[1], controlPoints[2], controlPoints[3], controlPoints[0],
+			worldViewProjectionMatrix, viewportMatrix, color);
+		for (int i = 0; i < 4; i++) {
+			draw->DrawSphere(Sphere(controlPoints[i], 0.01f), worldViewProjectionMatrix, viewportMatrix, BLACK);
+		}
 
-			//腕
-			//draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
+		//腕
+		draw->DrawArm(translates, rotates, scales, worldViewProjectionMatrix, viewportMatrix);
 
-			//ばね
+		//ばね
 		Vector3 screenVertices[2]{};
 		for (uint32_t i = 0; i < 2; ++i) {
 			Vector3 tmp[2]{

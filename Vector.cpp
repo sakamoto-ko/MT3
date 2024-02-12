@@ -130,6 +130,7 @@ Vector3 Harf(const Vector3& v, const float& a) {
 	return Vector3{ v.x / a, v.y / a, v.z / a };
 }
 
+//反射関数
 Vector3 Reflect(const Vector3& input, const Vector3& normal) {
 	Vector3 r = {};
 
