@@ -115,6 +115,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="MT4MyMath.cpp" />
+    <ClCompile Include="Quaterinion.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="Move.h" />
     <ClInclude Include="MT4MyMath.h" />
     <ClInclude Include="Overroad.h" />
+    <ClInclude Include="Quaterinion.h" />
     <ClInclude Include="Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

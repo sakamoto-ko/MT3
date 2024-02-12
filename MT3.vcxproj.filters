@@ -62,6 +62,9 @@
     <ClCompile Include="MT4MyMath.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Quaterinion.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -142,5 +145,6 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Overroad.h" />
     <ClInclude Include="MT4MyMath.h" />
+    <ClInclude Include="Quaterinion.h" />
   </ItemGroup>
 </Project>
