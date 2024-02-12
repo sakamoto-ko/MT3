@@ -1,6 +1,7 @@
 #include "Move.h"
 #include "Draw.h"
 #include "Overroad.h"
+#include "MT4MyMath.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -12,6 +13,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// キーの入力情報を取得するInputManager
 	InputManager* inputManager_ = InputManager::GetInstance();
 
+	Vector3 axis = Normalize({ 1.0f,1.0f,1.0f });
+	float angle = 0.44f;
+	Matrix4x4 rotateMatrix = MakeRotateAxisAngle(axis, angle);
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -19,6 +24,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//入力
 		inputManager_->Update();
+
+		MatrixScreenPrintf(0, 0, rotateMatrix, "rotateMatrix");
 
 		// フレームの終了
 		Novice::EndFrame();

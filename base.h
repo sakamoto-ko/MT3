@@ -19,7 +19,7 @@
 const char kWindowTitle[] = "LE2B_06_サカモトコウスケ_MT3";
 
 static const int kRowHeight = 20;
-static const int kColumnWidth = 60;
+static const int kColumnWidth = 80;
 
 struct Sphere {
 	Vector3 center;//!<中心点
