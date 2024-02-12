@@ -1,5 +1,13 @@
 ﻿#include "Vector.h"
 
+//文字出力
+void Vector3ScreenPrintf(int x, int y, const Vector3& v, const char* label) {
+	Novice::ScreenPrintf(x, y + 20, "%2.02f", v.x);
+	Novice::ScreenPrintf(x + 80, y + 20, "%2.02f", v.y);
+	Novice::ScreenPrintf(x + 160, y + 20, "%2.02f", v.z);
+	Novice::ScreenPrintf(x, y, "%s", label);
+}
+
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 result = { 0 };
@@ -20,6 +28,15 @@ Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
 
 //スカラー倍
 Vector3 Scalar(float scalar, const Vector3& v) {
+	Vector3 result = { 0 };
+	result.x = scalar * v.x;
+	result.y = scalar * v.y;
+	result.z = scalar * v.z;
+	return result;
+}
+
+Vector3 Scalar(const Vector3& v, float scalar)
+{
 	Vector3 result = { 0 };
 	result.x = scalar * v.x;
 	result.y = scalar * v.y;

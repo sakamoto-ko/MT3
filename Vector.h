@@ -1,12 +1,16 @@
 ﻿#pragma once
 #include "base.h"
 
+void Vector3ScreenPrintf(int x, int y, const Vector3& v, const char* label);
+
 //加算
 Vector3 Add(const Vector3& v1, const Vector3& v2);
 //減算
 Vector3 Subtract(const Vector3& v1, const Vector3& v2);
 //スカラー倍
 Vector3 Scalar(float scalar, const Vector3& v);
+//スカラー倍
+Vector3 Scalar(const Vector3& v, float scalar);
 //内積
 float Dot(const Vector3& v1, const Vector3& v2);
 //長さ

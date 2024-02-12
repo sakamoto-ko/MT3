@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Matrix.h"
-#include "Vector.h"
+#include "MT4MyMath.h"
 
 struct Quaternion {
 	float x;
@@ -20,3 +19,6 @@ Quaternion Normalize(const Quaternion& quaternion);
 Quaternion Inverse(const Quaternion& quaternion);
 Quaternion Scalar(float scalar, const Quaternion& q);
 Quaternion Scalar(const Quaternion& q, float scalar);
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
+Vector3 RotateVector(const Vector3& v, const Quaternion& q);
+Matrix4x4 MakeRotateMatrixQuaternion(const Quaternion& q);

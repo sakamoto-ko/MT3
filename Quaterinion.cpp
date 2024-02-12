@@ -11,17 +11,14 @@ void QuaternionScreenPrintf(int x, int y, const Quaternion& quaternion, const ch
 
 Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
 {
-	Vector3 resultV;
-	float resultW;
-
 	Vector3 lhsV = Vector3{ lhs.x,lhs.y,lhs.z };
 	float lhsW = lhs.w;
 
 	Vector3 rhsV = Vector3{ rhs.x,rhs.y,rhs.z };
 	float rhsW = rhs.w;
 
-	resultV = Add(Add(Cross(lhsV, rhsV), Scalar(rhsW, lhsV)), Scalar(lhsW, rhsV));
-	resultW = lhsW * rhsW - Dot(lhsV, rhsV);
+	Vector3 resultV = Add(Add(Cross(lhsV, rhsV), Scalar(rhsW, lhsV)), Scalar(lhsW, rhsV));
+	float resultW = lhsW * rhsW - Dot(lhsV, rhsV);
 
 	Quaternion result = { resultV.x,resultV.y,resultV.z,resultW };
 
@@ -30,18 +27,14 @@ Quaternion Multiply(const Quaternion& lhs, const Quaternion& rhs)
 
 Quaternion IdentityQuaternion()
 {
-	Quaternion result;
-
-	result = { 0.0f,0.0f,0.0f,1.0f };
+	Quaternion result = { 0.0f,0.0f,0.0f,1.0f };
 
 	return result;
 }
 
 Quaternion Conjugate(const Quaternion& quaternion)
 {
-	Quaternion result;
-
-	result = { -quaternion.x,-quaternion.y,-quaternion.z,quaternion.w };
+	Quaternion result = { -quaternion.x,-quaternion.y,-quaternion.z,quaternion.w };
 
 	return result;
 }
@@ -60,7 +53,7 @@ float Norm(const Quaternion& quaternion)
 
 Quaternion Normalize(const Quaternion& quaternion)
 {
-	Quaternion result;
+	Quaternion result{};
 
 	float x2 = quaternion.x * quaternion.x;
 	float y2 = quaternion.y * quaternion.y;
@@ -107,4 +100,51 @@ Quaternion Scalar(const Quaternion& q, float scalar)
 	result.w = scalar * q.w;
 
 	return result;
+}
+
+Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle)
+{
+	Vector3 qV = Scalar(axis, sinf(angle / 2.0f));
+	float qW = cosf(angle / 2.0f);
+
+	Quaternion result = { qV.x,qV.y,qV.z,qW };
+
+	return result;
+}
+
+Vector3 RotateVector(const Vector3& v, const Quaternion& q)
+{
+	Quaternion vq = { v.x,v.y,v.z,0.0f };
+	Quaternion conj = { Conjugate(q) };
+	Quaternion resultQ = { Multiply(Multiply(q,vq),conj) };
+	Vector3 result = { resultQ.x,resultQ.y,resultQ.z };
+
+	return result;
+}
+
+Matrix4x4 MakeRotateMatrixQuaternion(const Quaternion& q)
+{
+	Matrix4x4 m{};
+
+	m.m[0][0] = { q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z };
+	m.m[0][1] = { 2.0f * (q.x * q.y + q.w * q.z) };
+	m.m[0][2] = { 2.0f * (q.x * q.z - q.w * q.y) };
+	m.m[0][3] = { 0.0f };
+
+	m.m[1][0] = { 2.0f * (q.x * q.y - q.w * q.z) };
+	m.m[1][1] = { q.w * q.w - q.x * q.x + q.y * q.y - q.z * q.z };
+	m.m[1][2] = { 2.0f * (q.y * q.z + q.w * q.x) };
+	m.m[1][3] = { 0.0f };
+
+	m.m[2][0] = { 2.0f * (q.x * q.z + q.w * q.y) };
+	m.m[2][1] = { 2.0f * (q.y * q.z - q.w * q.x) };
+	m.m[2][2] = { q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z };
+	m.m[2][3] = { 0.0f };
+
+	m.m[3][0] = { 0.0f };
+	m.m[3][1] = { 0.0f };
+	m.m[3][2] = { 0.0f };
+	m.m[3][3] = { 1.0f };
+
+	return m;
 }

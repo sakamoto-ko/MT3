@@ -14,21 +14,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// キーの入力情報を取得するInputManager
 	InputManager* inputManager_ = InputManager::GetInstance();
 
-	Quaternion q1 = { 2.0f,3.0f,4.0f,1.0f };
-	Quaternion q2 = { 1.0f,3.0f,5.0f,2.0f };
+	Quaternion rotation = MakeRotateAxisAngleQuaternion(Normalize(Vector3{ 1.0f,0.4f,-0.2f }), 0.45f);
 
-	Quaternion mul1 = Multiply(q1, q2);
-	Quaternion mul2 = Multiply(q2, q1);
+	Vector3 pointY = { 2.1f,-0.9f,1.3f };
 
-	Quaternion identiy = IdentityQuaternion();
+	Vector3 rotateByQuaternion = RotateVector(pointY, rotation);
 
-	Quaternion conj = Conjugate(q1);
+	Matrix4x4 rotateMatrix = MakeRotateMatrixQuaternion(rotation);
 
-	float norm = Norm(q1);
-
-	Quaternion normal = Normalize(q1);
-
-	Quaternion inv = Inverse(q1);
+	Vector3 rotateByMatrix = Transform(pointY, rotateMatrix);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -38,14 +32,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//入力
 		inputManager_->Update();
 
-		QuaternionScreenPrintf(0, 0, mul1, "Multiply(q1, q2)");
-		QuaternionScreenPrintf(0, 50, mul2, "Multiply(q2, q1)");
-		QuaternionScreenPrintf(0, 100, identiy, "Identity");
-		QuaternionScreenPrintf(0, 150, conj, "Conjugate");
-		Novice::ScreenPrintf(0, 200, "%s", "Norm");
-		Novice::ScreenPrintf(0, 220, "%2.02f", norm);
-		QuaternionScreenPrintf(0, 250, normal, "Normalize");
-		QuaternionScreenPrintf(0, 300, inv, "Inverse");
+		QuaternionScreenPrintf(0, 0, rotation, "Rotation");
+
+		Vector3ScreenPrintf(0, 50, rotateByQuaternion, "rotateByQuaternion");
+
+		MatrixScreenPrintf(0, 100, rotateMatrix, "rotateMatrix");
+
+		Vector3ScreenPrintf(0, 200, rotateByMatrix, "rotateByMatrix");
 
 		// フレームの終了
 		Novice::EndFrame();
