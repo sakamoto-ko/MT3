@@ -18,7 +18,7 @@
 
 const char kWindowTitle[] = "LE2B_06_サカモトコウスケ_MT3";
 
-static const int kRowHeight = 20;
+static const int kRowHeight = 50;
 static const int kColumnWidth = 80;
 
 struct Sphere {

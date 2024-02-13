@@ -22,3 +22,6 @@ Quaternion Scalar(const Quaternion& q, float scalar);
 Quaternion MakeRotateAxisAngleQuaternion(const Vector3& axis, float angle);
 Vector3 RotateVector(const Vector3& v, const Quaternion& q);
 Matrix4x4 MakeRotateMatrixQuaternion(const Quaternion& q);
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t);
+Quaternion Add(const Quaternion& q1, const Quaternion& q2);
+Quaternion Lerp(const Quaternion& q0, const Quaternion& q1, float t);

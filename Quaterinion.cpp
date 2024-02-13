@@ -148,3 +148,52 @@ Matrix4x4 MakeRotateMatrixQuaternion(const Quaternion& q)
 
 	return m;
 }
+
+Quaternion Slerp(const Quaternion& q0, const Quaternion& q1, float t)
+{
+	float dot = Dot(Vector3{ q0.x,q0.y,q0.z }, Vector3{ q1.x,q1.y,q1.z });
+
+	Quaternion tmp0 = q0;
+
+	if (dot < 0) {
+		tmp0 = Scalar(-1.0f, tmp0);
+		dot = -dot;
+	}
+
+	Quaternion q0q1 = Lerp(tmp0, q1, t);
+
+	float theta = std::acos(dot);
+	float sinTheta = sinf(theta);
+
+	float scale0 = sinf((1 - t) * theta) / sinTheta;
+	float scale1 = sin(t * theta) / sinTheta;
+
+	Quaternion result = {
+		{ scale0 * tmp0.x + scale1 * q1.x },
+		{ scale0 * tmp0.y + scale1 * q1.y },
+		{ scale0 * tmp0.z + scale1 * q1.z },
+		{ scale0 * tmp0.w + scale1 * q1.w } };
+
+	return result;
+}
+
+Quaternion Lerp(const Quaternion& q0, const Quaternion& q1, float t) {
+	Quaternion result = {
+		(1.0f - t) * q0.x + t * q1.x,
+		(1.0f - t) * q0.y + t * q1.y,
+		(1.0f - t) * q0.z + t * q1.z,
+		(1.0f - t) * q0.w + t * q1.w, };
+
+	return result;
+}
+
+Quaternion Add(const Quaternion& q1, const Quaternion& q2)
+{
+	Quaternion result = {
+		q1.x + q2.x,
+		q1.y + q2.y,
+		q1.z + q2.z,
+		q1.w + q2.w };
+
+	return result;
+}
